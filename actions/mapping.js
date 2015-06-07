@@ -31,7 +31,7 @@ function createMapping(answers) {
 
       fs.writeFile(file, str, function () {
         console.log(chalk.green('\u2731 ') + 'creating file: ' + chalk.blue(file));
-      }); 
+      });
     })
     .catch(function(err) {
       console.log(chalk.red('Don\'t die Gabrielle!'));
@@ -44,9 +44,9 @@ function createMapping(answers) {
   ;
 }
 
-module.exports = function mapping(name) {
+function mapping(name, options) {
   var questions = [];
-  
+
   if (!name) {
     questions.unshift({
       type: 'input',
@@ -67,3 +67,10 @@ module.exports = function mapping(name) {
 
   return createMapping(mappingAnswers);
 };
+
+module.exports = program
+  .command('mapping')
+  .alias('m')
+  .description('Generate a mapping file')
+  .action(init)
+;
