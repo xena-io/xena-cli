@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('lodash');
+var program = require('commander');
 var Promise = require('bluebird');
 var fs = Promise.promisifyAll(require('fs'));
 var path = require('path');
@@ -31,7 +32,7 @@ function createMapping(answers) {
 
       fs.writeFile(file, str, function () {
         console.log(chalk.green('\u2731 ') + 'creating file: ' + chalk.blue(file));
-      }); 
+      });
     })
     .catch(function(err) {
       console.log(chalk.red('Don\'t die Gabrielle!'));
@@ -44,9 +45,9 @@ function createMapping(answers) {
   ;
 }
 
-module.exports = function mapping(name) {
+function mapping(name, options) {
   var questions = [];
-  
+
   if (!name) {
     questions.unshift({
       type: 'input',
@@ -59,11 +60,18 @@ module.exports = function mapping(name) {
   }
 
   if (questions.length) {
-    inquirer.prompt(questions, function(answers) {
-      _.extend({}, mappingAnswers, answers);
+    return inquirer.prompt(questions, function(answers) {
+      _.extend(mappingAnswers, answers);
       return createMapping(mappingAnswers);
     });
   }
 
   return createMapping(mappingAnswers);
 };
+
+module.exports = program
+  .command('mapping [name]')
+  .alias('m')
+  .description('Generate a mapping file')
+  .action(mapping)
+;

@@ -1,12 +1,12 @@
 {
   "name": "XENA",
-  "version": "0.0.0",
-  "description": "Create applications using Express, Elasticsearch, Node.js, AngularJS",
+  "version": "0.1.0",
+  "description": "eXtended Elasticsearch Node Angular - Create applications using Hapi, Elasticsearch, Node.js, AngularJS",
   "keywords": [
     "xena",
     "elasticsearch",
     "angularjs",
-    "express",
+    "hapi",
     "scaffold",
     "fullstack",
     "framework",
@@ -19,7 +19,8 @@
     "test": "gulp test"
   },
   "author": "Joël Matelli",
-  "license": "ISC",
+  "license": "MIT",
+  "preferGlobal": true,
   "bin": {
     "xena": "index.js"
   },
