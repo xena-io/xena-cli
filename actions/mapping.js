@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('lodash');
+var program = require('commander');
 var Promise = require('bluebird');
 var fs = Promise.promisifyAll(require('fs'));
 var path = require('path');
@@ -59,8 +60,8 @@ function mapping(name, options) {
   }
 
   if (questions.length) {
-    inquirer.prompt(questions, function(answers) {
-      _.extend({}, mappingAnswers, answers);
+    return inquirer.prompt(questions, function(answers) {
+      _.extend(mappingAnswers, answers);
       return createMapping(mappingAnswers);
     });
   }
@@ -69,8 +70,8 @@ function mapping(name, options) {
 };
 
 module.exports = program
-  .command('mapping')
+  .command('mapping [name]')
   .alias('m')
   .description('Generate a mapping file')
-  .action(init)
+  .action(mapping)
 ;

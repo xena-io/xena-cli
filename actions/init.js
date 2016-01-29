@@ -58,26 +58,27 @@ function createApp(answers) {
       mkdir(answers.appname + '/server/api');
       mkdir(answers.appname + '/server/config');
       mkdir(answers.appname + '/server/config/environment');
-      mkdir(answers.appname + '/server/elasticsearch');
-
-      // structure client
-      mkdir(answers.appname + '/client');
-      mkdir(answers.appname + '/client/app');
-      mkdir(answers.appname + '/client/components');
-      mkdir(answers.appname + '/client/assets');
-      mkdir(answers.appname + '/client/assets/images');
+      mkdir(answers.appname + '/server/es');
 
       console.log('');
 
-      // package.json
+      // structure client
+      mkdir(answers.appname + '/client');
+      mkdir(answers.appname + '/client/assets');
+
+      console.log('');
+
+      // project root
       createFile(answers.appname + '/package.json', readTpl('_package.json'));
+      createFile(answers.appname + '/gulpfile.babel.js', readTpl('gulpfile.babel.js'));
+      createFile(answers.appname + '/webpack.config.js', readTpl('webpack.config.js'));
 
       // server
       createFile(answers.appname + '/server/server.js', readTpl('server/server.js'));
 
       // elastic
-      createFile(answers.appname + '/server/elasticsearch/init.js', readTpl('server/es/init.js'));
-      createFile(answers.appname + '/server/elasticsearch/client.js', readTpl('server/es/client.js'));
+      createFile(answers.appname + '/server/es/init.js', readTpl('server/es/init.js'));
+      createFile(answers.appname + '/server/es/client.js', readTpl('server/es/client.js'));
 
       // config
       createFile(answers.appname + '/server/config/environment/index.js',
@@ -86,6 +87,14 @@ function createApp(answers) {
         readTpl('server/config/environment/_development.js'));
       createFile(answers.appname + '/server/config/environment/production.js',
         readTpl('server/config/environment/_production.js'));
+
+      console.log('');
+
+      createFile(answers.appname + '/client/index.html', readTpl('client/_index.html'));
+      createFile(answers.appname + '/client/app.js', readTpl('client/app.js'));
+      createFile(answers.appname + '/client/app.config.js', readTpl('client/_app.config.js'));
+
+      shell.exec("curl -o " + answers.appname + "/client/assets/mdi.svg https://materialdesignicons.com/api/download/angularmaterial/38EF63D0-4744-11E4-B3CF-842B2B6CFE1B")
     })
     .catch(function(err) {
       console.log('');
@@ -98,7 +107,7 @@ function createApp(answers) {
       console.log('');
       console.log('To launch your application follow those steps:');
       console.log('');
-      console.log('  $ ' + chalk.blue('cd ' + answers.appname + ' && npm install && bower install'));
+      console.log('  $ ' + chalk.blue('cd ' + answers.appname + ' && npm install'));
     })
   ;
 }
@@ -132,6 +141,20 @@ function init(name, options) {
       name: 'replicas',
       message: 'Number of replicas:',
       default: 0
+    },
+    {
+      type: 'list',
+      name: 'theme1',
+      message: 'Main color for Angular Material theme:',
+      choices: ['red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow', 'amber', 'orange', 'deep-orange', 'brown', 'grey', 'blue-grey'],
+      default: 'blue'
+    },
+    {
+      type: 'list',
+      name: 'theme2',
+      message: 'Secondary color for Angular Material theme:',
+      choices: ['red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green', 'light-green', 'lime', 'yellow', 'amber', 'orange', 'deep-orange', 'brown', 'grey', 'blue-grey'],
+      default: 'red'
     }
   ];
 
