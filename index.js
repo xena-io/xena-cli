@@ -10,5 +10,6 @@ program
 
 require('./actions/init');
 require('./actions/mapping');
+require('./actions/endpoint');
 
 program.parse(process.argv);
