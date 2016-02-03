@@ -20,12 +20,31 @@ $ npm link
 
 ## Usage
 
-To initialize a XENA application (the name is optional, if you don't specify it in the command it will be asked during the initialization):
+All options for the following commands are optional, if you don't input them, you will be asked during the execution of the command.
+
+### Initialization
+
+To initialize a XENA application:
 ```shell
 $ xena init [name]
 ```
+### Mapping
 
-To create a new mapping for an elasticsearch type (as with the init command, the name is optional):
+To create a new mapping for an elasticsearch type:
 ```shell
-$ xena mapping [name]
+$ xena mapping [name] [fields...]
+```
+
+The fields option is a list of all the fields you wish to push in your mapping, the syntax is `name:type`
+
+Here is an exemple :
+```shell
+$ xena mapping user username:string email:string dob:date
+```
+
+### Endpoint
+
+To create an endpoint in the backend API:
+```shell
+$ xena endpoint [name]
 ```
