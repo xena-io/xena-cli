@@ -1,5 +1,5 @@
 {
-  "name": "XENA",
+  "name": "xena",
   "version": "0.1.0",
   "description": "eXtended Elasticsearch Node Angular - Create applications using Hapi, Elasticsearch, Node.js, AngularJS",
   "keywords": [
@@ -10,7 +10,6 @@
     "scaffold",
     "fullstack",
     "framework",
-    "component",
     "front-end",
     "app"
   ],
@@ -20,6 +19,10 @@
   },
   "author": "Joël Matelli",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xena-io/xena-cli.git"
+  },
   "preferGlobal": true,
   "bin": {
     "xena": "index.js"
