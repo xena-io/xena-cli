@@ -10,12 +10,8 @@ The eXtended is for [Hapi](http://hapijs.com/) (HENA didn't sound so good and wa
 
 ## Installation
 
-This is not a published npm module yet so to install this you have follow those steps:
-
 ```shell
-$ git clone https://github.com/xena-io/xena-cli.git
-$ cd xena-cli
-$ npm link
+$ npm install -g xena
 ```
 
 ## Usage
