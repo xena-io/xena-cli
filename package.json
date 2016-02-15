@@ -1,6 +1,6 @@
 {
   "name": "xena",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "eXtended Elasticsearch Node Angular - Create applications using Hapi, Elasticsearch, Node.js, AngularJS",
   "keywords": [
     "xena",
