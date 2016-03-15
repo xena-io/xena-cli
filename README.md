@@ -33,6 +33,8 @@ $ xena mapping [name] [fields...]
 
 The fields option is a list of all the fields you wish to push in your mapping, the syntax is `name:type`
 
+You can find the list of accepted types [here](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html).
+
 Here is an exemple :
 ```shell
 $ xena mapping user username:string email:string dob:date

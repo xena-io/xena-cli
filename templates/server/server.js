@@ -5,18 +5,20 @@ import Hoek from 'hoek';
 import Inert from 'inert';
 import good from 'good';
 import goodConsole from 'good-console';
-
+import Promise from 'bluebird';
 import path from 'path';
 
-// application configuration
 import conf from './conf/environment';
 
-// initialization elasticsearch
 import esInit from './es/init';
 
 // routes
-import api from './api';
+import Api from './api';
 
+// static
+import Static from './utils/static';
+
+// initialize Hapi server
 const server = new Hapi.Server({
   connections: {
     routes: {
@@ -27,6 +29,11 @@ const server = new Hapi.Server({
   }
 });
 
+// Promisify server methods
+const register = Promise.promisify(server.register, {context: server});
+const start = Promise.promisify(server.start, {context: server});
+
+// initialize server connections
 server.connection({
   host: conf.host,
   port: conf.port
@@ -35,54 +42,41 @@ server.connection({
 const goodOptions = {
   reporters: [
     {
-      reporter: goodConsole,
+      reporter: goodConsole,    // Log everything to console
       events: {log: '*', response: '*'}
     }
   ]
 };
 
-esInit()
+Promise.all([
+  esInit(),
+  register(Api, {routes: {prefix: '/api'}}),
+  register([Inert, Static, {register: good, options: goodOptions}])
+])
   .then(() => {
-    server.register(
-      [
-        Inert,
-        {
-          register: good,
-          options: goodOptions
-        }
-      ], (err) => {
-        Hoek.assert(!err, err);
+    // handle API errors
+    server.ext('onPreResponse', (request, reply) => {
+      const response = request.response;
 
-        server.ext('onPreResponse', function(request, reply) {
-          const response = request.response;
+      if (!response.isBoom)
+        return reply.continue();
 
-          if (!response.isBoom || request.route.settings.id !== 'statics') {
-            return reply.continue();
-          }
+      var res = {};
 
-          return reply.file('index.html');
-        });
+      res.code = !isNaN(response.status) ? +response.status : 500;
 
-        server.route({
-          method: 'GET',
-          path: '/{param*}',
-          handler: {
-            directory: {
-              path: '.',
-              lookupCompressed: true,
-              redirectToSlash: false,
-            }
-          },
-          config: {id: 'statics'}
-        });
+      if (response.message)
+        res.message = response.message || 'Internal server error';
 
-        api(server);
+      reply(res).code(res.code);
+    });
 
-        server.start((err) => {
-          Hoek.assert(!err, err);
-          console.log('Server started at: ' + server.info.uri);
-        });
-      }
-    );
+    return start();
   })
+  .then(() => console.log('Server started at: ' + server.info.uri))
+  .catch(err => console.error(err.stack))
 ;
+
+process.on("unhandledRejection", function(reason, promise) {
+  throw reason;
+});

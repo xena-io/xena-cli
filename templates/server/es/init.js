@@ -1,60 +1,61 @@
 'use strict';
 
-var conf = require('../conf');
-var _ = require('lodash');
-var Promise = require('bluebird');
-var glob = Promise.promisify(require('glob'));
-var path = require('path');
-var winston = require('../conf/winston');
+import conf from '../conf/environment';
+import _ from 'lodash';
+import Promise from 'bluebird';
+import Glob from 'glob';
+import path from 'path';
+import winston from 'winston';
 
-var client = require('./client');
+import client from './client';
 
-function getEsTypes() {
+const glob = Promise.promisify(Glob);
+
+function getEsTypes () {
   return glob(path.join(__dirname, '../**/*.object.js'))
-    .map(function mapFiles(filename) {
-      return require(filename);
+    .map((filename) => {
+      return require(filename).default;
     })
   ;
 }
 
-function createIndicesIfNeeded() {
-  return Promise.map(conf.elastic.indices, function (index) {
-    return client.indices.exists({index: index})
-      .then(function(exists) {
-        if (exists)
-          return;
-
-        return client.indices.create({
-          body: {
-            settings: {
-              index: {
-                number_of_shards: conf.elastic.number_of_shards,
-                number_of_replicas: conf.elastic.number_of_replicas,
-              },
-            },
-          },
-          index: index,
-        })
-        .tap(function() {
-          winston.info('ELASTIC >>>> Index %s created', index);
-        });
+function createIndexIfNeeded() {
+  return client.indices.exists({index: conf.elastic.index})
+    .then((exists) => {
+      if (exists)
+        return;
+      return client.indices.create({
+        body: {
+          settings: {
+            index: {
+              number_of_shards: conf.elastic.number_of_shards,
+              number_of_replicas: conf.elastic.number_of_replicas
+            }
+          }
+        },
+        index: conf.elastic.index,
       })
-    ;
-  });
+        .then((res) => {
+          winston.info('[ELASTIC] >>>> Index created');
+          return res;
+        })
+      ;
+    })
+  ;
 }
 
-module.exports = function elasticInit() {
-  winston.info('ELASTIC >>>> init elasticsearch');
+export default function elasticInit () {
+  winston.info('[ELASTIC] >>>> init elasticsearch');
 
   return Promise.join(
     getEsTypes(),
-    createIndicesIfNeeded(),
+    createIndexIfNeeded(),
     _.identity
   )
-    .map(function(Type) {
+    .map((Type) => {
       return Type.createOrUpdateMapping();
     })
     .return('')
-    .tap(winston.info.bind(winston, 'ELASTIC >>>> Mapping created/updated!'))
+    .tap(winston.info.bind(winston, '[ELASTIC] >>>> Mapping created/updated!'))
   ;
 };

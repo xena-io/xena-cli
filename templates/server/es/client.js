@@ -1,6 +1,13 @@
 'use strict';
 
-var elasticsearch = require('elasticsearch');
-var config = require('../config');
+import elasticsearch from 'elasticsearch';
+import conf from '../config/environment';
+import Promise from 'bluebird';
 
-module.exports = new elasticsearch.Client({host: config.elastic.host});
+const client = new elasticsearch.Client({
+  host: conf.elastic.host,
+  index: conf.elastic.host,
+  defer: Promise.defer,
+});
+
+export default client;

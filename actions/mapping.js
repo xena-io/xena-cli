@@ -74,27 +74,30 @@ function parseFields(fields) {
 }
 
 function mapping(name, fields, options) {
-  var questions = [];
-
-  if (!name) {
-    questions.push({
+  var questions = [
+    {
       type: 'input',
       name: 'mapping',
-      message: 'What is the name of the mapping?'
-    });
-  }
-  else {
+      message: 'What is the name of the mapping?',
+      when: function() {
+        return !name;
+      }
+    },
+    {
+      type: 'input',
+      name: 'fields',
+      message: 'What are the fields for this mapping? (the syntax to declare a field is field:type, ex: name:string, each field separated by a space)',
+      when: function() {
+        return !fields || !fields.length;
+      }
+    }
+  ];
+
+  if (name) {
     mappingAnswers.mapping = name;
   }
 
-  if (!fields || !fields.length) {
-    questions.push({
-      type: 'input',
-      name: 'fields',
-      message: 'What are the fields for this mapping? (the syntax to declare a field is field:type, ex: name:string, each field separated by a space)'
-    });
-  }
-  else {
+  if (fields && fields.length) {
     mappingAnswers.fields = parseFields(fields);
   }
 

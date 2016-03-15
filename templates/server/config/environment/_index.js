@@ -1,11 +1,15 @@
 'use strict';
 
-var _ = require('lodash');
-var path = require('path');
+import _ from 'lodash';
+import path from 'path';
 
-var all = {
+const all = {
   env: process.env.NODE_ENV || 'development',
-  port: process.env.NODE_PORT || 3000
+  port: process.env.NODE_PORT || 3000,
+  root: path.normalize(__dirname, '/../..'),
 };
 
-module.exports = _.extend({}, all, require('./' + conf.env + '.js'));
+const environment = require(__dirname + '/' + all.env + '.js').default;
+const conf = _.extend({}, all, environment);
+
+export default conf;
