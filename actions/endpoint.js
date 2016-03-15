@@ -51,10 +51,19 @@ function createEndpoint(answers) {
       createFile(appname + '/server/api/' + answers.name + '/' + answers.name + '.object.js',
         readTpl('server/api/endpoint/_.object.js')
       );
+      createFile(appname + '/server/api/' + answers.name + '/list.js',
+        readTpl('server/api/endpoint/_list.js')
+      );
+      createFile(appname + '/server/api/' + answers.name + '/get.js',
+        readTpl('server/api/endpoint/_get.js')
+      );
+      createFile(appname + '/server/api/' + answers.name + '/post.js',
+        readTpl('server/api/endpoint/_post.js')
+      );
 
       if (!answers.mappingExists) {
-        createFile(appname + '/server/api/' + answers.name + '/' + answers.name + '.mapping.json',
-          readTpl('server/api/endpoint/_.mapping.json')
+        createFile(appname + '/server/api/' + answers.name + '/' + answers.name + '.mapping.yaml',
+          readTpl('server/api/endpoint/_.mapping.yaml')
         );
       }
     })
@@ -84,7 +93,32 @@ function parseFields(fields) {
 }
 
 function endpoint(name, options) {
-  var questions = [];
+  var questions = [
+    {
+      type: 'input',
+      name: 'name',
+      message: 'What is the name of the endpoint?',
+      when: function() {
+        return !name;
+      }
+    },
+    {
+      type: 'confirm',
+      name: 'mapping',
+      message: 'It seems that there is no mapping for this endpoint yet, would you like to create one?',
+      when: function(answers) {
+        return !exists;
+      }
+    },
+    {
+      type: 'input',
+      name: 'fields',
+      message: 'What are the fields for this mapping? (the syntax to declare a field is field:type, ex: name:string, each field separated by a space)',
+      when: function(answers) {
+        return !exists && answers.mapping;
+      }
+    }
+  ];
   var mapping = appname + '/server/api/' + name + '/' + name + '.mapping.json';
   var fields = [];
 
@@ -106,33 +140,9 @@ function endpoint(name, options) {
         }
       }
 
-      if (!name) {
-        questions.push({
-          type: 'input',
-          name: 'name',
-          message: 'What is the name of the endpoint?'
-        });
-      }
-      else {
+      if (name) {
         endpointAnswers.name = name;
       }
-
-      questions.push({
-        type: 'confirm',
-        name: 'mapping',
-        message: 'It seems that there is no mapping for this endpoint yet, would you like to create one?',
-        when: function(answers) {
-          return !exists;
-        }
-      });
-      questions.push({
-        type: 'input',
-        name: 'fields',
-        message: 'What are the fields for this mapping? (the syntax to declare a field is field:type, ex: name:string, each field separated by a space)',
-        when: function(answers) {
-          return !exists && answers.mapping;
-        }
-      });
 
       if (questions.length) {
         return inquirer.prompt(questions, function(answers) {

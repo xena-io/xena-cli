@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = {
+export default {
   env: 'development',
   host: 'localhost',
   staticDir: path.join(__dirname, '../dev')

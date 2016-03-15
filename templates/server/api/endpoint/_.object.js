@@ -8,11 +8,10 @@ import path from 'path';
 var object = esObject.create({
   db: {
     client: client,
-    host: conf.elastic.host,
     index: conf.elastic.index,
     type: '<%= name %>',
   },
-  mapping: path.join(__dirname, '<%= name %>.mapping.json'),
+  mapping: path.join(__dirname, '<%= name %>.mapping.yaml'),
   import: {
     <% if(mappingExists) { %>
     <% for(var i = 0, l = fields.length; i < l; i++) { %>

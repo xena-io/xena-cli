@@ -59,6 +59,7 @@ function createApp(answers) {
       mkdir(answers.appname + '/server/config');
       mkdir(answers.appname + '/server/config/environment');
       mkdir(answers.appname + '/server/es');
+      mkdir(answers.appname + '/server/utils');
 
       console.log('');
 
@@ -88,6 +89,9 @@ function createApp(answers) {
       createFile(answers.appname + '/server/config/environment/production.js',
         readTpl('server/config/environment/_production.js'));
 
+      // utils
+      createFile(answers.appname + '/server/utils/static.js', readTpl('server/utils/static.js'));
+
       console.log('');
 
       createFile(answers.appname + '/client/index.html', readTpl('client/_index.html'));
@@ -114,6 +118,14 @@ function createApp(answers) {
 
 function init(name, options) {
   var questions = [
+    {
+      type: 'input',
+      name: 'appname',
+      message: 'What\'s the name of your application?',
+      when: function() {
+        return !name;
+      }
+    },
     {
       type: 'input',
       name: 'description',
@@ -158,14 +170,7 @@ function init(name, options) {
     }
   ];
 
-  if(!name) {
-    questions.unshift({
-      type: 'input',
-      name: 'appname',
-      message: 'What\'s the name of your application?',
-    });
-  }
-  else {
+  if(name) {
     initAnswers.appname = name;
   }
 
